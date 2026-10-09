@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iGCSE Inverse Proportion Interactive Workshop</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --heading: #f0f6fc;
+            --accent: #238636;
+            --accent-hover: #2ea043;
+            --blue: #58a6ff;
+            --purple: #bc8cff;
+            --code-bg: #21262d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            color: var(--heading);
+        }
+
+        .card {
+            background-color: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            background-color: rgba(56, 139, 253, 0.15);
+            color: var(--blue);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--code-bg);
+            color: var(--heading);
+        }
+
+        input[type="number"], select {
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            background-color: #010409;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            width: 100%;
+            max-width: 800px;
+            height: 350px;
+            display: block;
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(46, 160, 67, 0.15);
+            border: 1px solid var(--accent);
+            color: #3fb950;
+        }
+
+        .error {
+            background-color: rgba(248, 81, 73, 0.15);
+            border: 1px solid #f85149;
+            color: #f85149;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            color: var(--blue);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="badge">iGCSE Edexcel / AQA Math</span>
+        <h1>Inverse Proportion Interactive Workshop</h1>
+        <p>Derive formulas, visualize reciprocal curves, and solve exam-style problems.</p>
+    </header>
+
+    <!-- Module 1: Real World Derivation -->
+    <div class="card">
+        <h2>Phase 1: Concert Venue Setup (Deriving $y = \frac{k}{x}$)</h2>
+        <p>A sound system rental costs a total fixed amount of <strong>£600</strong>. Complete the table to observe how member count affects individual share:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Members ($n$)</th>
+                    <th>Cost per Member ($C$)</th>
+                    <th>Total Cost ($n \cdot C$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>2</td><td>£300</td><td>600</td></tr>
+                <tr><td>4</td><td>£150</td><td>600</td></tr>
+                <tr><td>6</td><td><input type="number" id="c1" placeholder="?"></td><td>600</td></tr>
+                <tr><td>10</td><td><input type="number" id="c2" placeholder="?"></td><td>600</td></tr>
+                <tr><td>20</td><td><input type="number" id="c3" placeholder="?"></td><td>600</td></tr>
+            </tbody>
+        </table>
+        <button onclick="checkTable()">Validate Calculations</button>
+        <div id="table-result" class="result-box"></div>
+    </div>
+
+    <!-- Module 2: Visual Graph Simulator -->
+    <div class="card">
+        <h2>Phase 2: Reciprocal Curve Simulator</h2>
+        <p>Observe how changing the constant <code>k</code> and power affects the hyperbola graph:</p>
+
+        <div class="controls">
+            <label>Constant $k$: <input type="number" id="graph-k" value="20" min="1" max="100" oninput="drawGraph()"></label>
+            <label>Model: 
+                <select id="graph-model" onchange="drawGraph()">
+                    <option value="1">$y = k / x$</option>
+                    <option value="2">$y = k / x^2$</option>
+                    <option value="0.5">$y = k / \sqrt{x}$</option>
+                </select>
+            </label>
+        </div>
+
+        <canvas id="graphCanvas" width="800" height="350"></canvas>
+    </div>
+
+    <!-- Module 3: Solver Tool -->
+    <div class="card">
+        <h2>Phase 3: 4-Step Inverse Proportion Solver</h2>
+        <p>Use this interactive tool to verify your homework step-by-step:</p>
+        
+        <div class="controls">
+            <label>Given $x$: <input type="number" id="solve-x1" value="8"></label>
+            <label>Given $y$: <input type="number" id="solve-y1" value="3"></label>
+            <label>Target $x$: <input type="number" id="solve-x2" value="12"></label>
+            <button onclick="solveProportion()">Calculate Steps</button>
+        </div>
+
+        <div id="solver-output" style="margin-top: 15px; font-family: monospace; white-space: pre-wrap; background: var(--code-bg); padding: 12px; border-radius: 6px; display: none;"></div>
+    </div>
+
+    <!-- Module 4: Exam Challenge -->
+    <div class="card">
+        <h2>Phase 4: Self-Grading Exam Challenge</h2>
+        <p><strong>Question:</strong> Force $F$ is inversely proportional to $d^2$. When $d = 3\text{ cm}$, $F = 20\text{ N}$. Find $F$ when $d = 6\text{ cm}$.</p>
+        
+        <div class="controls">
+            <label>Constant $k$: <input type="number" id="exam-k" placeholder="Value of k"></label>
+            <label>Final Force $F$: <input type="number" id="exam-f" placeholder="Final answer"></label>
+            <button onclick="checkExam()">Submit Exam Answers</button>
+        </div>
+        <div id="exam-result" class="result-box"></div>
+    </div>
+</div>
+
+<script>
+    // Task 1 Check
+    function checkTable() {
+        const c1 = parseFloat(document.getElementById('c1').value);
+        const c2 = parseFloat(document.getElementById('c2').value);
+        const c3 = parseFloat(document.getElementById('c3').value);
+        const res = document.getElementById('table-result');
+
+        if (c1 === 100 && c2 === 60 && c3 === 30) {
+            res.className = "result-box success";
+            res.innerText = "Correct! Notice that n * C = 600 always. Therefore C = 600 / n.";
+        } else {
+            res.className = "result-box error";
+            res.innerText = "Incorrect answers. Remember: Cost = 600 / Members.";
+        }
+        res.style.display = "block";
+    }
+
+    // Task 2 Canvas Graph
+    function drawGraph() {
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const k = parseFloat(document.getElementById('graph-k').value) || 20;
+        const power = parseFloat(document.getElementById('graph-model').value);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Axes
+        ctx.strokeStyle = '#30363d';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(40, 10); ctx.lineTo(40, 310); // Y axis
+        ctx.moveTo(40, 310); ctx.lineTo(780, 310); // X axis
+        ctx.stroke();
+
+        // Draw Grid Labels
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '12px sans-serif';
+        ctx.fillText('0', 25, 325);
+        ctx.fillText('X', 760, 325);
+        ctx.fillText('Y', 15, 20);
+
+        // Draw Curve
+        ctx.strokeStyle = '#58a6ff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+
+        let first = true;
+        for (let px = 1; px <= 730; px += 2) {
+            let x = px / 50; // Scale factor
+            let y = k / Math.pow(x, power);
+
+            let py = 310 - (y * 10); // Scale Y
+
+            if (py >= 10 && py <= 310) {
+                if (first) {
+                    ctx.moveTo(px + 40, py);
+                    first = false;
+                } else {
+                    ctx.lineTo(px + 40, py);
+                }
+            }
+        }
+        ctx.stroke();
+    }
+
+    // Task 3 Solver
+    function solveProportion() {
+        const x1 = parseFloat(document.getElementById('solve-x1').value);
+        const y1 = parseFloat(document.getElementById('solve-y1').value);
+        const x2 = parseFloat(document.getElementById('solve-x2').value);
+        const out = document.getElementById('solver-output');
+
+        if (!x1 || !y1 || !x2) return;
+
+        const k = x1 * y1;
+        const y2 = k / x2;
+
+        out.innerText = `Step 1: Write formula => y = k / x
+Step 2: Solve k       => k = ${x1} * ${y1} = ${k}
+Step 3: Specific EQ   => y = ${k} / x
+Step 4: Solve Target  => y = ${k} / ${x2} = ${y2}`;
+        out.style.display = "block";
+    }
+
+    // Task 4 Exam Check
+    function checkExam() {
+        const k = parseFloat(document.getElementById('exam-k').value);
+        const f = parseFloat(document.getElementById('exam-f').value);
+        const res = document.getElementById('exam-result');
+
+        if (k === 180 && f === 5) {
+            res.className = "result-box success";
+            res.innerText = "Full Marks! (k = 180, F = 180 / 6^2 = 5 N)";
+        } else {
+            res.className = "result-box error";
+            res.innerText = "Check your work: k = 20 * (3^2) = 180. Then calculate F = 180 / (6^2).";
+        }
+        res.style.display = "block";
+    }
+
+    // Initialize Canvas on Load
+    window.onload = drawGraph;
+</script>
+
+</body>
+</html>
