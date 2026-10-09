@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iGCSE Inverse Proportion Interactive Workshop</title>
+    
+    <!-- MathJax for rendering proper mathematical fractions and equations -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['[', ']']]
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         :root {
             --bg: #0d1117;
@@ -82,7 +94,7 @@
             color: var(--text);
             padding: 8px 12px;
             border-radius: 6px;
-            width: 100px;
+            width: 120px;
             font-size: 1rem;
         }
 
@@ -139,12 +151,13 @@
             color: #f85149;
         }
 
-        code {
-            background-color: var(--code-bg);
-            color: var(--blue);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
+        .step-output {
+            margin-top: 15px;
+            background: var(--code-bg);
+            padding: 16px;
+            border-radius: 6px;
+            display: none;
+            line-height: 1.8;
         }
     </style>
 </head>
@@ -160,7 +173,7 @@
     <!-- Module 1: Real World Derivation -->
     <div class="card">
         <h2>Phase 1: Concert Venue Setup (Deriving $y = \frac{k}{x}$)</h2>
-        <p>A sound system rental costs a total fixed amount of <strong>£600</strong>. Complete the table to observe how member count affects individual share:</p>
+        <p>A sound system rental costs a fixed total amount of <strong>£600</strong>. Complete the table to observe how member count affects individual share:</p>
         
         <table>
             <thead>
@@ -185,15 +198,15 @@
     <!-- Module 2: Visual Graph Simulator -->
     <div class="card">
         <h2>Phase 2: Reciprocal Curve Simulator</h2>
-        <p>Observe how changing the constant <code>k</code> and power affects the hyperbola graph:</p>
+        <p>Observe how changing the constant $k$ and power affects the hyperbola curve:</p>
 
         <div class="controls">
             <label>Constant $k$: <input type="number" id="graph-k" value="20" min="1" max="100" oninput="drawGraph()"></label>
             <label>Model: 
                 <select id="graph-model" onchange="drawGraph()">
-                    <option value="1">$y = k / x$</option>
-                    <option value="2">$y = k / x^2$</option>
-                    <option value="0.5">$y = k / \sqrt{x}$</option>
+                    <option value="1">Standard: y = k / x</option>
+                    <option value="2">Square: y = k / x²</option>
+                    <option value="0.5">Square Root: y = k / √x</option>
                 </select>
             </label>
         </div>
@@ -204,7 +217,7 @@
     <!-- Module 3: Solver Tool -->
     <div class="card">
         <h2>Phase 3: 4-Step Inverse Proportion Solver</h2>
-        <p>Use this interactive tool to verify your homework step-by-step:</p>
+        <p>Use this interactive tool to verify your steps and formulas:</p>
         
         <div class="controls">
             <label>Given $x$: <input type="number" id="solve-x1" value="8"></label>
@@ -213,7 +226,7 @@
             <button onclick="solveProportion()">Calculate Steps</button>
         </div>
 
-        <div id="solver-output" style="margin-top: 15px; font-family: monospace; white-space: pre-wrap; background: var(--code-bg); padding: 12px; border-radius: 6px; display: none;"></div>
+        <div id="solver-output" class="step-output"></div>
     </div>
 
     <!-- Module 4: Exam Challenge -->
@@ -240,10 +253,12 @@
 
         if (c1 === 100 && c2 === 60 && c3 === 30) {
             res.className = "result-box success";
-            res.innerText = "Correct! Notice that n * C = 600 always. Therefore C = 600 / n.";
+            res.innerHTML = "Correct! Notice that $n \\cdot C = 600$ always. Therefore $C = \\frac{600}{n}$.";
+            if (window.MathJax) MathJax.typesetPromise([res]);
         } else {
             res.className = "result-box error";
-            res.innerText = "Incorrect answers. Remember: Cost = 600 / Members.";
+            res.innerHTML = "Incorrect answers. Remember: $\\text{Cost} = \\frac{600}{\\text{Members}}$.";
+            if (window.MathJax) MathJax.typesetPromise([res]);
         }
         res.style.display = "block";
     }
@@ -308,11 +323,14 @@
         const k = x1 * y1;
         const y2 = k / x2;
 
-        out.innerText = `Step 1: Write formula => y = k / x
-Step 2: Solve k       => k = ${x1} * ${y1} = ${k}
-Step 3: Specific EQ   => y = ${k} / x
-Step 4: Solve Target  => y = ${k} / ${x2} = ${y2}`;
+        out.innerHTML = `
+            <strong>Step 1 (General Formula):</strong> $y = \\frac{k}{x}$<br>
+            <strong>Step 2 (Solve for $k$):</strong> $k = ${x1} \\cdot ${y1} = ${k}$<br>
+            <strong>Step 3 (Specific Formula):</strong> $y = \\frac{${k}}{x}$<br>
+            <strong>Step 4 (Target Value):</strong> $y = \\frac{${k}}{${x2}} = ${y2}$
+        `;
         out.style.display = "block";
+        if (window.MathJax) MathJax.typesetPromise([out]);
     }
 
     // Task 4 Exam Check
@@ -323,10 +341,12 @@ Step 4: Solve Target  => y = ${k} / ${x2} = ${y2}`;
 
         if (k === 180 && f === 5) {
             res.className = "result-box success";
-            res.innerText = "Full Marks! (k = 180, F = 180 / 6^2 = 5 N)";
+            res.innerHTML = "Full Marks! ($k = 180$, $F = \\frac{180}{6^2} = 5\\text{ N}$)";
+            if (window.MathJax) MathJax.typesetPromise([res]);
         } else {
             res.className = "result-box error";
-            res.innerText = "Check your work: k = 20 * (3^2) = 180. Then calculate F = 180 / (6^2).";
+            res.innerHTML = "Check your work: $k = 20 \\cdot 3^2 = 180$. Then calculate $F = \\frac{180}{6^2}$.";
+            if (window.MathJax) MathJax.typesetPromise([res]);
         }
         res.style.display = "block";
     }
